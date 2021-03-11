@@ -32,6 +32,7 @@ The processed data was then fitted with `RandomForestClassifier` and `LogisticRe
 ### Classification Report For Both Models
 
 <img src="https://github.com/hannz88/Income_Prediction_Machine_Learning/blob/main/Images/RFC1_class_report.png" width="400"/> <img src="https://github.com/hannz88/Income_Prediction_Machine_Learning/blob/main/Images/LR1_class_report.png" width="400"/> 
+*RandomForestClassifier on the left; LogisticRegression on the right* 
 
 The overall accuracy for both the models are the same but the precision and recall are different. Precision indicates the proportion of positive identifications that was actually correct; recall is showing the proportion of actual positives that were correctly identified. Precision uses false positive counts while recall uses false negative counts. As such, they're always at tug-of-war. Precision for `LogisticRegression` is higher but recall for `RandomForestClassifier` is higher. This situation isn't helped by the fact that we have an unbalanced dataset, the class 1 to class 0 is almost 1 to 16.
 
