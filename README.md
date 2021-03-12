@@ -76,11 +76,34 @@ grid_lr.best_params_
 
 ### Classifcation Report
 <img src="https://github.com/hannz88/Income_Prediction_Machine_Learning/blob/main/Images/Classification_report_rfc2.png" width="400"/> <img src="https://github.com/hannz88/Income_Prediction_Machine_Learning/blob/main/Images/Classification_report_LR2.png" width="400"/>
+*RandomForestClassifier on the left; LogisticRegression on the right*
 
-From the classication report, we could see t
+From the classication report, we could see that the overall accuracy did not change. However, the precision for `RandomForestClassifier` has increased from 0.66 to 0.90 using the parameters from GridSearchCV but at the expense of recall which decreased from 0.43 to o.13 which then affects the f1 score. The precision and recall from `LogisticRegression` had not changed much.
 
 ### ROC-AUC
 <img src="https://github.com/hannz88/Income_Prediction_Machine_Learning/blob/main/Images/rocauc_GridSearch_RFC2.png" width="400"/> <img src="https://github.com/hannz88/Income_Prediction_Machine_Learning/blob/main/Images/rocauc_GridSearch_LR2.png" width="400"/>
 
+AUC decreased from 0.70 to 0.57 for `RandomForestClassifier`while in `LogisticRegression`, the AUC did not change.
+
 ### Precision-recall AUC
 <img src="https://github.com/hannz88/Income_Prediction_Machine_Learning/blob/main/Images/precision_recall_RFC2.png" width="400"/> <img src="https://github.com/hannz88/Income_Prediction_Machine_Learning/blob/main/Images/precison_recall_GridSearch_LR2.png" width="400"/>
+
+Interestingly, the AUC using Precision-Recall curve for both of the models did not change.
+
+## Feature selection
+Using `SelectFromModel` from sklearn, I conducted feature selection to see if I could reduce the number of features and perhaps improve the model. From the comparison, `RandomForestClassifier` has slightly better performance in terms of ROC AUC and Precision/Recall AUC. The variables that were selected are as follows:
+
+<p align="center">
+    <img src="https://github.com/hannz88/Income_Prediction_Machine_Learning/blob/main/Images/Feature_selection_variables.png" alt="Variables selected from feature selection">
+</p>
+
+When I fit the `RandomForestClassifier` using the variables from feature selection, the results obtained were interesting. The precision is better than  when using all variables but the recall has decreased. The ROC/AUC has decreased from 0.70 to 0.63 but there is very slight increase in Precision/Recall AUC. When training using the reduced variables, the time is shorter but the gains is not much if any.
+
+<p align="center">
+    <img src="https://github.com/hannz88/Income_Prediction_Machine_Learning/blob/main/Images/Classification_report_from_feature_selection.png" alt="Classification report using variables from feature selection">
+</p>
+
+<img src="https://github.com/hannz88/Income_Prediction_Machine_Learning/blob/main/Images/rocauc_rfc_feature_selection.png" width="400"/> <img src="https://github.com/hannz88/Income_Prediction_Machine_Learning/blob/main/Images/precison_recall_rfc_feature_selection.png" width="400"/>
+
+## Conclusion
+`RandomForestClassifier` performed slightly better than `LogisticRegression`. When using feature selection, there is a slight improvement in the Precision/Recall AUC with a shorter amount of time needed for modelling. However, there is only very slight gain. 
