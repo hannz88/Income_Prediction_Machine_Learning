@@ -14,6 +14,16 @@ This project was original presented by Reply Data during the Data Science Campus
     - Grid search
     - Feature selection
 
+## Table of content
+
+- [Data exploration](#data-exploration)
+- [Data Cleaning & Feature Engineering](#Data-Cleaning-&-Feature-Engineering)
+- [Machine Learning](#Machine-Learning)
+    - [Model training/ fitting](#Model-training/-fitting)
+    - [Grid search](#Grid-search)
+    - [Feature selection](#Feature-selection)
+- [Conclusion](#Conclusion)
+
 ## Data exploration
 Original data dimension was 199523 rows x 23 columns. The variables are as follows:
 
@@ -23,34 +33,36 @@ Original data dimension was 199523 rows x 23 columns. The variables are as follo
 
 While NA wasn't used to indicate missing missing values, the dataset used "?" or "Not in universe" fill in the null.
 
-## Data cleaning & Feature Engineering
+## Data Cleaning & Feature Engineering
 In order to simplify the data, a few of the categories were turned into binary data such as birth place of father, birth place of mother, etc. Wherever possible, 1 would indicate "United States". `Sex` was also binarized. Furthermore, the missing values were imputed using the mode for the respective columns. In order to normalize the distribution of the ratio data, `MinMaxScaler` was used while `OneHotEncoder` was applied to categorical data. These were used in conjunction with `Pipeline` and `ColumnTransformer`.
 
 ## Machine Learning
+
+### Model training/ fitting
 The processed data was then fitted with `RandomForestClassifier` and `LogisticRegression`. `RandomForestClassifier` is an ensemble ML model has generally been well-performing and reduces the risk of overfitting than using a single `DecisionTree`. As the outcome was binary, `LogisticRegression` is apt for the situation. The outcome from both models were compared.
 
-### Classification Report For Both Models
+#### Classification Report For Both Models
 
 <img src="https://github.com/hannz88/Income_Prediction_Machine_Learning/blob/main/Images/RFC1_class_report.png" width="400"/> <img src="https://github.com/hannz88/Income_Prediction_Machine_Learning/blob/main/Images/LR1_class_report.png" width="400"/> 
 *RandomForestClassifier on the left; LogisticRegression on the right* 
 
 The overall accuracy for both the models are the same but the precision and recall are different. Precision indicates the proportion of positive identifications that was actually correct; recall is showing the proportion of actual positives that were correctly identified. Precision uses false positive counts while recall uses false negative counts. As such, they're always at tug-of-war. Precision for `LogisticRegression` is higher but recall for `RandomForestClassifier` is higher. This situation isn't helped by the fact that we have an unbalanced dataset, the class 1 to class 0 is almost 1 to 16. As such, accuracy isn't sufficient enough to evaluate the model. f1 score isn't terribly high either. We'll look at other metrics to compare the models.
 
-### ROC-AUC For Both Models
+#### ROC-AUC For Both Models
 ROC stands for Receiver Operating Characistics that summarizes the trade-off between false positive rate and true positive rate (aka recall) using different probability thresholds for binary classifier. A classifier that only predicts the majority class under all thresholds will be represented by the line joining the bottom left to the upper right. The area under the curve (AUC) is helpful as they can be calculated and compared against other classifier. AUC of 1 means it's a perfect classifier.
 
 <img src="https://github.com/hannz88/Income_Prediction_Machine_Learning/blob/main/Images/rocauc_RFC1.png" width="400"/> <img src="https://github.com/hannz88/Income_Prediction_Machine_Learning/blob/main/Images/rocauc_LR1.png" width="400"/>
 
 Here, we can see that AUC for the `RandomForestClassifier` is 0.70 while AUC for `LogisticRegression` is 0.60 which is just a little lower but not a lot. The dummy model that does not learn has AUC of 0.5, as one would expect in a binary classifier.
 
-### Precision-recall Curve
+#### Precision-recall Curve
 ROC-AUC isn't enough for imbalanced dataset. A few incorrect predictions could skew the results for a highly imbalanced dataset. An alternative is to use precision-recall curve, which focuses on the minority class. Much like ROC, the curve is calculated based on different thresholds and the AUC could be used to compare models. A dummy classifier will be a horizontal line on the plot with a precision that is proportional to the number of positive examples in the dataset.
 
 <img src="https://github.com/hannz88/Income_Prediction_Machine_Learning/blob/main/Images/precision_recall_RFC1.png" width="400"/> <img src="https://github.com/hannz88/Income_Prediction_Machine_Learning/blob/main/Images/precision_recall_LR1.png" width="400"/>
 
 In the figure above, `RandomForestClassifier` has AUC of 0.55 while `LogisticRegression` has AUC of 0.53 which, again, is slightly lower. 
 
-## Grid search
+### Grid search
 I used `GridSearchCv` from `sklearn` for hyperparameter tuning. The following are the hyperparameters for the models.
 
 `RandomForestClassifier`:
@@ -74,23 +86,23 @@ grid_lr.best_params_
 >>> {'C': 10, 'penalty': 'l1'}
 ```
 
-### Classifcation Report
+#### Classifcation Report
 <img src="https://github.com/hannz88/Income_Prediction_Machine_Learning/blob/main/Images/Classification_report_rfc2.png" width="400"/> <img src="https://github.com/hannz88/Income_Prediction_Machine_Learning/blob/main/Images/Classification_report_LR2.png" width="400"/>
 *RandomForestClassifier on the left; LogisticRegression on the right*
 
 From the classication report, we could see that the overall accuracy did not change. However, the precision for `RandomForestClassifier` has increased from 0.66 to 0.90 using the parameters from GridSearchCV but at the expense of recall which decreased from 0.43 to o.13 which then affects the f1 score. The precision and recall from `LogisticRegression` had not changed much.
 
-### ROC-AUC
+#### ROC-AUC
 <img src="https://github.com/hannz88/Income_Prediction_Machine_Learning/blob/main/Images/rocauc_GridSearch_RFC2.png" width="400"/> <img src="https://github.com/hannz88/Income_Prediction_Machine_Learning/blob/main/Images/rocauc_GridSearch_LR2.png" width="400"/>
 
 AUC decreased from 0.70 to 0.57 for `RandomForestClassifier`while in `LogisticRegression`, the AUC did not change.
 
-### Precision-recall AUC
+#### Precision-recall AUC
 <img src="https://github.com/hannz88/Income_Prediction_Machine_Learning/blob/main/Images/precision_recall_RFC2.png" width="400"/> <img src="https://github.com/hannz88/Income_Prediction_Machine_Learning/blob/main/Images/precison_recall_GridSearch_LR2.png" width="400"/>
 
 Interestingly, the AUC using Precision-Recall curve for both of the models did not change.
 
-## Feature selection
+### Feature selection
 Using `SelectFromModel` from sklearn, I conducted feature selection to see if I could reduce the number of features and perhaps improve the model. From the comparison, `RandomForestClassifier` has slightly better performance in terms of ROC AUC and Precision/Recall AUC. The variables that were selected are as follows:
 
 <p align="center">
