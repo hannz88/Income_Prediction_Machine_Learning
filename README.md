@@ -49,3 +49,38 @@ ROC-AUC isn't enough for imbalanced dataset. A few incorrect predictions could s
 <img src="https://github.com/hannz88/Income_Prediction_Machine_Learning/blob/main/Images/precision_recall_RFC1.png" width="400"/> <img src="https://github.com/hannz88/Income_Prediction_Machine_Learning/blob/main/Images/precision_recall_LR1.png" width="400"/>
 
 In the figure above, `RandomForestClassifier` has AUC of 0.55 while `LogisticRegression` has AUC of 0.53 which, again, is slightly lower. 
+
+## Grid search
+I used `GridSearchCv` from `sklearn` for hyperparameter tuning. The following are the hyperparameters for the models.
+
+`RandomForestClassifier`:
+```
+rfc=RandomForestClassifier(random_state=42)
+param_grid = { 
+    'n_estimators': [200,500,700],
+    'max_depth' : [2,4,6,8]
+}
+grid_search = GridSearchCV(rfc, param_grid=param_grid, cv=5, scoring = "f1")
+grid_search.best_params_
+>>> {'max_depth': 8, 'n_estimators': 700}
+```
+
+`LogisticRegression`:
+```
+lr2 = LogisticRegression(random_state=42, solver="liblinear")  # have to use liblinear as l1 is not supported by lbfgs
+grid_values = {'penalty': ['l1', 'l2'],'C':[0.001,.009,0.01,.09,1,5,10,25]}
+grid_lr = GridSearchCV(lr2, param_grid = grid_values,scoring = 'f1')
+grid_lr.best_params_
+>>> {'C': 10, 'penalty': 'l1'}
+```
+
+### Classifcation Report
+<img src="https://github.com/hannz88/Income_Prediction_Machine_Learning/blob/main/Images/Classification_report_rfc2.png" width="400"/> <img src="https://github.com/hannz88/Income_Prediction_Machine_Learning/blob/main/Images/Classification_report_LR2.png" width="400"/>
+
+From the classication report, we could see t
+
+### ROC-AUC
+<img src="https://github.com/hannz88/Income_Prediction_Machine_Learning/blob/main/Images/rocauc_GridSearch_RFC2.png" width="400"/> <img src="https://github.com/hannz88/Income_Prediction_Machine_Learning/blob/main/Images/rocauc_GridSearch_LR2.png" width="400"/>
+
+### Precision-recall AUC
+<img src="https://github.com/hannz88/Income_Prediction_Machine_Learning/blob/main/Images/precision_recall_RFC2.png" width="400"/> <img src="https://github.com/hannz88/Income_Prediction_Machine_Learning/blob/main/Images/precison_recall_GridSearch_LR2.png" width="400"/>
